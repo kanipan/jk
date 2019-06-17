@@ -27,8 +27,6 @@
     const anchors_length = anchors.length;
 
     function moveResultLink(event){
-        //let active_element = document.activeElement;
-        //console.log(active_element);
         if (document.activeElement.type === "text") return;
         switch (event.keyCode){
             case 74: // j
