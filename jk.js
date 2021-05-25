@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         google search result up down
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.google.com/search?*
@@ -14,16 +14,24 @@
     let links_index = -1;
     let links = document.getElementsByClassName("g");
     let anchors = new Array();
-    [].forEach.call(links, function(elements){
-        anchors.push(elements.getElementsByTagName("a")[0]);
-    });
-    let prev_next_link = document.getElementsByClassName("b");
+    let target_anchor = null;
+    const page_table = document.getElementsByTagName('table');
+    const goooogle_anchors = page_table[0].getElementsByTagName('a');
 
-    [].forEach.call(prev_next_link, function(p_n_elements){
-        let p_n_anchor = p_n_elements.getElementsByTagName("a");
-        if (p_n_anchor.length === 0) return;
-        anchors.push( p_n_anchor[0]);
+    // no search result
+    if (links.length === 0) return;
+
+    // push search result link to array
+    [].forEach.call(links, function(elements){
+        let search_result_anchor = elements.getElementsByTagName("a")[0];
+        // except search result link that I don't expect
+        if (search_result_anchor.href !== "" && search_result_anchor.ping !== ""){
+            anchors.push(elements.getElementsByTagName("a")[0]);
+        }
     });
+
+    // push next and prev page link to array
+    set_table_anchors(goooogle_anchors);
     const anchors_length = anchors.length;
 
     function moveResultLink(event){
@@ -35,31 +43,47 @@
             case 75: // k
                 prevResultLink();
                 break;
-            case 27: // Esc
-                clear_focus();
-                break;
             default:
-                console.log(event.keyCode);
                 break;
         }
     }
 
     function nextResultLink(){
         if (links_index >= -1 && (links_index + 1) < anchors_length) {
+            reset_focused_style(target_anchor);
             links_index++;
-            anchors[links_index].focus();
+            target_anchor = anchors[links_index];
+            set_focused_style(target_anchor);
         }
     }
 
     function prevResultLink(){
         if ((links_index) > 0 && links_index <= anchors_length) {
+            reset_focused_style(target_anchor);
             links_index--;
-            anchors[links_index].focus();
+            target_anchor = anchors[links_index];
+            set_focused_style(target_anchor);
         }
     }
 
-    function clear_focus(){
-        anchors[links_index].blur();
+    function reset_focused_style(target_anchor){
+        if (target_anchor !== null) {
+            target_anchor.style.border = null;
+        }
+    }
+
+    function set_focused_style(target_anchor){
+        target_anchor.focus();
+        target_anchor.style.border = 'solid';
+    }
+
+    function set_table_anchors(goooogle_anchors){
+        // if exists prev page link
+        if (goooogle_anchors[0].id === 'pnprev'){
+            anchors.push(goooogle_anchors[0]);
+        }
+        // add next page link
+        anchors.push(goooogle_anchors[goooogle_anchors.length - 1]);
     }
 
     document.onkeydown = function(event){ moveResultLink(event); };
