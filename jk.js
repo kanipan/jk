@@ -16,7 +16,7 @@
     let anchors = new Array();
     let target_anchor = null;
     const page_table = document.getElementsByTagName('table');
-    const goooogle_anchors = page_table[0].getElementsByTagName('a');
+    const goooogle_anchors = page_table[page_table.length - 1].getElementsByTagName('a');
 
     // no search result
     if (links.length === 0) return;
