@@ -3,8 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.3
 // @description  try to take over the world!
-// @author       You
+// @author       https://github.com/kanipan
 // @match        https://www.google.com/search?*
+// @match        https://www.google.co.jp/search?*
 // @grant        none
 // ==/UserScript==
 
