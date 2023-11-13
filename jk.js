@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         google search result up down
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  try to take over the world!
 // @author       https://github.com/kanipan
 // @match        https://www.google.com/search?*
@@ -16,8 +16,6 @@
     let links = document.getElementsByClassName("g");
     let anchors = new Array();
     let target_anchor = null;
-    const page_table = document.getElementsByTagName('table');
-    const goooogle_anchors = page_table[page_table.length - 1].getElementsByTagName('a');
 
     // no search result
     if (links.length === 0) return;
@@ -31,8 +29,6 @@
         }
     });
 
-    // push next and prev page link to array
-    set_table_anchors(goooogle_anchors);
     const anchors_length = anchors.length;
 
     function moveResultLink(event){
@@ -76,15 +72,6 @@
     function set_focused_style(target_anchor){
         target_anchor.focus();
         target_anchor.style.border = 'solid';
-    }
-
-    function set_table_anchors(goooogle_anchors){
-        // if exists prev page link
-        if (goooogle_anchors[0].id === 'pnprev'){
-            anchors.push(goooogle_anchors[0]);
-        }
-        // add next page link
-        anchors.push(goooogle_anchors[goooogle_anchors.length - 1]);
     }
 
     document.onkeydown = function(event){ moveResultLink(event); };
